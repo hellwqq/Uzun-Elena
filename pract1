@@ -167,5 +167,17 @@ cat output.txt
 ```
 ## Задание 10
 ```
+nano emptyfiles
 
+#!/bin/bash
+
+find "$1" -type f -name "*.txt" -empty
+
+chmod +x emptyfiles
+
+mkdir test_empty
+touch test_empty/empty.txt
+echo "hello" > test_empty/not_empty.txt
+touch test_empty/test.py
+./emptyfiles test_empty
 ```
