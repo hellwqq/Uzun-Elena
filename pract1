@@ -1,68 +1,169 @@
 # Практика 1
+
 ## Задание 1
 ```
-localhost:~# cd /etc
-localhost:/etc# ls
+localhost:~/practice1# grep -o '^[^:]*' /etc/passwd | sort
 
-localhost:/etc# cut -d: -f1 passwd | sort
 ```
 ## Задание 2
 ```
-localhost:/etc# awk '{print $2, $1}' protocols | sort -nr | head -n 5
+localhost:~/practice1# awk '!/^#/ && NF >= 2 {print $2, $1}' /etc/protocols | sort -nr | head -5
 
-localhost:/etc# cd ~
 ```
 ## Задание 3
 ```
-localhost:~# nano banner
+localhost:~/practice1# nano banner
+
+#!/bin/bash
 
 text="$1"
-length=${#text}
-line=$(printf '%*s' "$length" ''| tr ' ' '-')
-echo "+-${line}-+"
-echo "| ${text} |"
-echo "+-${line}-+"
+len=${#text}
+width=$((len + 2))
 
-localhost:~# chmod +x banner
-localhost:~# ./banner "Hello from RTU MIREA!"
+printf -v line '%*s' "$width" ''
+line=${line// /-}
+
+echo "+$line+"
+echo "| $text |"
+echo "+$line+"
+
+localhost:~/practice1# chmod +x banner
+localhost:~/practice1# ./banner "Hello from RTU MIREA!"
+
+#chmod меняет права доступа к файлу, а +x добавляет право на выполнение
 ```
 ## Задание 4
 ```
-localhost:~# nano find_ids
+localhost:~/practice1# nano identifiers
+#!/bin/bash
 
-filename="$1"
-grep -oE '[a-zA-Z_][a-zA-Z0-9_]*' "$filename" | sort -u | xargs
+grep -oE '[a-zA-Z_][a-zA-Z0-9_]*' "$1" | sort -u | tr '\n' ' '
+echo
 
-localhost:~# chmod +x find_ids
-localhost:~# ./find_ids hello.c
+localhost:~/practice1# chmod +x identifiers
+localhost:~/practice1# ./identifiers hello.c
 ```
 ## Задание 5
 ```
-localhost:~# nano reg
+localhost:~/practice1# nano reg
 
-name="$1"
-chmod +x "$name"
-cp "$name" /usr/local/bin/
+#!/bin/bash
 
-localhost:~# chmod +x reg
-localhost:~# ./reg banner
-localhost:~# banner "Работает!"
+if [ "$#" -ne 1 ]; then
+    echo "Usage: ./reg program"
+    exit 1
+fi
+
+if [ ! -f "$1" ]; then
+    echo "File not found"
+    exit 1
+fi
+
+chmod +x "$1"
+sudo cp "$1" /usr/local/bin/
+
+localhost:~/practice1# chmod +x reg
+localhost:~/practice1# ./reg banner
+localhost:~/practice1# banner "Работает!"
+# $# — количество аргументов, переданных программе.
+#-f проверяет, существует ли обычный файл по указанному пути.
+#sudo — выполняет команду с правами администратора
+#/usr/local/bin/ — каталог назначения
+
 ```
 ## Задание 6
 ```
+localhost:~/practice1# nano comments
 
+#!/bin/bash
+
+find "$1" -type f \( -name "*.c" -o -name "*.js" -o -name "*.py" \) | while read -r file
+do
+    first=$(head -n 1 "$file")
+
+    if [[ "$first" == \#* || "$first" == //* ]]; then
+        echo "$file: comment"
+    else
+        echo "$file: no comment"
+    fi
+done
+
+localhost:~/practice1# chmod +x comments
+echo '# test' > test.py
+echo '# test' > test.py
+echo '// test' > test.c
+./comments .
+# $(...) позволяет взять результат команды и записать его в переменную.
+#head начало файла
 ```
 ## Задание 7
 ```
+localhost:~/practice1#  nano duplicates
 
+#!/bin/bash
+
+find "$1" -type f -exec md5sum {} \; | sort | awk '{
+    if ($1 == old) {
+        if (count == 1) print old_file
+        print $2
+        count++
+    } else {
+        old = $1
+        old_file = $2
+        count = 1
+    }
+}'
+
+localhost:~/practice1# mkdir test_duplicates
+localhost:~/practice1# echo "hello" > test_duplicates/a.txt
+localhost:~/practice1# echo "hello" > test_duplicates/b.txt
+localhost:~/practice1# echo "hello" > test_duplicates/b.txt
+localhost:~/practice1# ./duplicates test_duplicates
+localhost:~/practice1# chmod +x duplicates
+
+# MD5-хеш содержимого файла.
+# {} текущий найденный файл.
 ```
 ## Задание 8
 ```
+localhost:~/practice1# nano archive
 
+#!/bin/bash
+
+dir="$1"
+ext="$2"
+
+find "$dir" -type f -name "*.$ext" > files.txt
+tar -cf archive.tar -T files.txt
+rm files.txt
+
+echo "Archive created: archive.tar"
+
+localhost:~/practice1# chmod +x archive
+echo "one" > a.txt
+echo "two" > b.txt
+echo "three" > test.py
+mkdir folder
+echo "four" > folder/c.txt
+./archive . txt
+
+tar -tf archive.tar
+
+#tar — программа для создания архивов
 ```
 ## Задание 9
 ```
+nano spaces
 
+#!/bin/bash
+
+sed 's/    /\t/g' "$1" > "$2"
+
+chmod +x spaces
+
+echo '    hello    world' > input.txt
+./spaces input.txt output.txt
+cat output.txt
 ```
 ## Задание 10
 ```
