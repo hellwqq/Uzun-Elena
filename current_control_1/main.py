@@ -1,7 +1,6 @@
 import getpass
 import socket
 import shlex
-
 user = getpass.getuser()
 host = socket.gethostname()
 
