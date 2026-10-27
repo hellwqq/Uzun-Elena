@@ -62,3 +62,16 @@ directories=1
 files=5
 bytes=126
 ```
+## Запуск в Windows PowerShell
+
+Если команда `python` не работает, используй `py`.
+
+```powershell
+py tools/make_vfs.py
+py -m unittest discover -v
+py src/main.py --vfs examples/vfs/files.zip
+py src/main.py --vfs examples/vfs/files.zip --script examples/startup/vfs.emu
+```
+
+Для запуска тестов ожидается результат `OK`.
+
