@@ -1,0 +1,5 @@
+# Stage 3: the VFS is loaded from a ZIP archive into memory
+vfs-info
+vfs-info extra
+conf-dump
+exit

@@ -1,0 +1,8 @@
+# Stage 2: parameters and the conf-dump command
+conf-dump
+conf-dump extra
+unknown-command
+ls "my docs" 'a b' c
+ls "unterminated
+conf-dump
+exit
