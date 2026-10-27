@@ -1,5 +1,0 @@
-ls test.txt
-cd "my folder"
-conf-dump
-unknown
-exit
